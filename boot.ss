@@ -1,0 +1,20 @@
+(define run (lambda (cmd arg workdir)
+    (define p (ps-new))
+    (define si (ps-psi p))
+    (psi-exe si cmd)
+    (psi-arg si arg)
+    (psi-dir si workdir)
+    ; (psi-createnowindow si 0)
+    ;(psi-redirect-stdout si 1)
+    ;(psi-redirect-stderr si 1)
+    (psi-shell si 0)
+    (print si)
+    (ps-interact p)
+    (ps-wait p)))
+
+(highlight-add "Unity:" (list "unity" "hashibuild"))
+(highlight-add "Zip:" (list "zip"))
+
+
+(run "cmd.exe" "/c tree" "c:/p")
+(highlight-show)
