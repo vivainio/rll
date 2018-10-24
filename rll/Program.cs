@@ -109,6 +109,12 @@ namespace rll
                     System.Environment.Exit(exitCode);
                     return None.Instance;
                 }) },
+                { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
+                {
+                    var found = l.Cast<string>().FirstOrDefault(e => File.Exists(e));
+                    return found == null ? defaultName : found;
+                }) },
+
             };
             var itpl = new Interpreter(new[] { processExt, appExt });
             return itpl;

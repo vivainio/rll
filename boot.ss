@@ -1,3 +1,9 @@
+
+(define MSBUILD_PLACES `(
+    "C:/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
+    "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/MSBuild.exe"
+))
+
 (define run (lambda (cmd arg workdir)
     (define p (ps-new))
     (define si (ps-psi p))
@@ -8,13 +14,21 @@
     ;(psi-redirect-stdout si 1)
     ;(psi-redirect-stderr si 1)
     (psi-shell si 0)
-    (print si)
     (ps-interact p)
     (ps-wait p)))
 
-(highlight-add "Unity:" (list "unity" "hashibuild"))
-(highlight-add "Zip:" (list "zip"))
+(define msbuild (guess-file 
+    "msbuild.exe" MSBUILD_PLACES
+    ))
+
+(print msbuild)
 
 
-(run "cmd.exe" "/c tree" "c:/p")
+
+(highlight-add "Unity:" '("unity" "hashibuild"))
+(highlight-add "Zip:" '("zip"))
+
+(define guessed (guess-file "a.txt" '("rll.exe" "c.txt")))
+
+;(run "cmd.exe" "/c tree" "c:/p")
 (highlight-show)
