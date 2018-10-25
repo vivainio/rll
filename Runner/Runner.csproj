@@ -7,7 +7,7 @@
     <ProjectGuid>{B83ABF60-5167-4046-BB29-32DF223EF539}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Runner</RootNamespace>
-    <AssemblyName>Runner</AssemblyName>
+    <AssemblyName>rll</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,6 +31,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Runner.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

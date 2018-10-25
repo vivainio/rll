@@ -10,7 +10,7 @@ namespace Runner
     {
         static void Main(string[] args)
         {
-            Rll.RllApp.RllMain(args);
+            Rll.RllApp.RllMain();
         }
     }
 }

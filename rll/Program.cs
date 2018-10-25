@@ -135,8 +135,9 @@ namespace Rll
             return itpl;
 
         }
-        public static void RllMain(string[] args)
+        public static void RllMain()
         {
+            var args = System.Environment.GetCommandLineArgs();
             var script = args[0];
             var itp = CreateItpl();
             var r = itp.Evaluate(File.OpenText(script));
