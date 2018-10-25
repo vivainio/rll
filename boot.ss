@@ -17,18 +17,21 @@
     (ps-interact p)
     (ps-wait p)))
 
-(define msbuild (guess-file 
+(define msbuild (guess-file
     "msbuild.exe" MSBUILD_PLACES
     ))
 
 (print msbuild)
 
+(cf-truncate 250)
+
+(run msbuild "BuildSilverlight.xml" "c:/p2p/src/sl")
 
 
-(highlight-add "Unity:" '("unity" "hashibuild"))
-(highlight-add "Zip:" '("zip"))
+(highlight-add "*** Warnings:" '("warning"))
+(highlight-add "*** Errors:" '("error"))
 
-(define guessed (guess-file "a.txt" '("rll.exe" "c.txt")))
+;(define guessed (guess-file "a.txt" '("rll.exe" "c.txt")))
 
 ;(run "cmd.exe" "/c tree" "c:/p")
 (highlight-show)

@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace rll
 {
+    static class RllConfig
+    {
+        public static int TruncateCol = 0;
+
+
+    }
     class Program
     {
 
@@ -16,26 +22,29 @@ namespace rll
         static List<string> ErrorLines = new List<string>();
         static List<string[]> Highlighters = new List<string[]>();
 
+        static void PushOutput(string o)
+        {
+            var col = RllConfig.TruncateCol;
+            var toAdd = col == 0 || o.Length < col ? o : o.Substring(0, col) + "...";
+            // let's add original to summary
+            OutputLines.Add(o);
+            Console.WriteLine(toAdd);
+        }
         public static void InteractProcess(Process p)
         {
-           
-
             p.OutputDataReceived += (o, d) =>
             {
                 if (d.Data != null)
                 {
-                    OutputLines.Add(d.Data);
-                    Console.WriteLine($"Out: {d.Data}");
+                    PushOutput(d.Data);
                 }
-
-
             };
             p.ErrorDataReceived += (o, d) =>
             {
                 if (d.Data != null)
                 {
+                    PushOutput(d.Data);
                     ErrorLines.Add(d.Data);
-                    Console.WriteLine($"Err: {d.Data}");
                 }
             };
             p.StartInfo.RedirectStandardOutput = true;
@@ -114,6 +123,9 @@ namespace rll
                     var found = l.Cast<string>().FirstOrDefault(e => File.Exists(e));
                     return found == null ? defaultName : found;
                 }) },
+
+
+                { Symbol.FromString("cf-truncate"), NativeProcedure.Create<int, object>(num => RllConfig.TruncateCol = num ) },
 
             };
             var itpl = new Interpreter(new[] { processExt, appExt });
