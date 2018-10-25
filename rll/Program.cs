@@ -12,8 +12,7 @@ namespace rll
     static class RllConfig
     {
         public static int TruncateCol = 0;
-
-
+        public static string[] ShowOnly = null;
     }
     class Program
     {
@@ -28,6 +27,9 @@ namespace rll
             var toAdd = col == 0 || o.Length < col ? o : o.Substring(0, col) + "...";
             // let's add original to summary
             OutputLines.Add(o);
+            if (RllConfig.ShowOnly != null && !RllConfig.ShowOnly.Any(p => o.Contains(p))) {
+                return;
+            } 
             Console.WriteLine(toAdd);
         }
         public static void InteractProcess(Process p)
@@ -126,6 +128,7 @@ namespace rll
 
 
                 { Symbol.FromString("cf-truncate"), NativeProcedure.Create<int, object>(num => RllConfig.TruncateCol = num ) },
+                { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
 
             };
             var itpl = new Interpreter(new[] { processExt, appExt });
