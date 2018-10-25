@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace rll
+namespace Rll
 {
     static class RllConfig
     {
         public static int TruncateCol = 0;
         public static string[] ShowOnly = null;
     }
-    class Program
+    public static class RllApp
     {
 
         static List<string> OutputLines = new List<string>();
@@ -135,7 +135,7 @@ namespace rll
             return itpl;
 
         }
-        static void Main(string[] args)
+        public static void RllMain(string[] args)
         {
             var script = args[0];
             var itp = CreateItpl();

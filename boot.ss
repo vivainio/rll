@@ -23,15 +23,16 @@
 
 (print msbuild)
 
+
 (cf-truncate 250)
-
-(run msbuild "BuildSilverlight.xml" "c:/p2p/src/sl")
-
+(cf-show-only '("Done Building"))
 
 (highlight-add "*** Warnings:" '("warning"))
 (highlight-add "*** Errors:" '("error"))
+(run msbuild "BuildSilverlight.xml" "c:/p2p/src/sl")
+(rl-save-output "out.txt")
 
 ;(define guessed (guess-file "a.txt" '("rll.exe" "c.txt")))
 
 ;(run "cmd.exe" "/c tree" "c:/p")
-(highlight-show)
+;(highlight-show)
