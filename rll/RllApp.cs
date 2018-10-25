@@ -135,10 +135,46 @@ namespace Rll
             return itpl;
 
         }
+
+        public static void RunRepl()
+        {
+            var itp = CreateItpl();
+            itp.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl" }); 
+        }
+
         public static void RllMain()
         {
             var args = System.Environment.GetCommandLineArgs();
-            var script = args[0];
+            
+            var myname = args[0];
+            var mybin = Path.GetFileNameWithoutExtension(myname);
+            var mypath = Path.GetDirectoryName(myname);
+            string script = null;
+            if (mybin == "rll")
+            {
+                if (args.Length == 1)
+                {
+                    RunRepl();
+
+                }
+                script = args[1];
+
+            } else
+            {
+                var tries =
+                    new[] { $"rll_{myname}.ss", $"rll/{myname}.ss" }
+                    .Select(t => Path.Combine(mypath, t));
+
+
+                script = tries.FirstOrDefault(File.Exists);
+                if (script == null)
+                {
+                    Console.WriteLine("Rll: did not find any of: " + tries.ToString());
+                    System.Environment.Exit(1);
+                        
+                }
+            }
+
             var itp = CreateItpl();
             var r = itp.Evaluate(File.OpenText(script));
             Console.WriteLine(r.Error);
