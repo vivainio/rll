@@ -34,6 +34,7 @@ namespace Rll
         }
         public static void InteractProcess(Process p)
         {
+            p.StartInfo.UseShellExecute = false;
             p.OutputDataReceived += (o, d) =>
             {
                 if (d.Data != null)
@@ -55,6 +56,28 @@ namespace Rll
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
         }
+
+        // rll-run
+        public static Process ConvenienceRun(string cmd, string arg, string cwd, bool interact)
+        {
+            var p = new Process();
+            var psi = p.StartInfo;
+            psi.FileName = cmd;
+            psi.Arguments = arg;
+            if (cwd != null)
+            {
+                psi.WorkingDirectory = cwd;
+            }
+            if (interact)
+            {
+                InteractProcess(p);
+            } else
+            {
+                p.Start();
+            }
+            return p;
+        }
+
         public static Interpreter CreateItpl()
         {
             Interpreter.CreateSymbolTableDelegate appExt = _ => new Dictionary<Symbol, object>()
@@ -82,10 +105,13 @@ namespace Rll
                     };
                     return None.Instance;
                 }) },
-
-
+                { Symbol.FromString("cf-truncate"), NativeProcedure.Create<int, object>(num => RllConfig.TruncateCol = num ) },
+                { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
+                { Symbol.FromString("rll-run"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
+                    ConvenienceRun(cmd, arg, null, true)) },
+                { Symbol.FromString("rll-run-new"), NativeProcedure.Create<string, string, Process >((cmd, arg) =>
+                    ConvenienceRun(cmd, arg, null, false)) }
             };
-
 
             Interpreter.CreateSymbolTableDelegate processExt = _ => new Dictionary<Symbol, object>()
             {
@@ -125,11 +151,6 @@ namespace Rll
                     var found = l.Cast<string>().FirstOrDefault(e => File.Exists(e));
                     return found == null ? defaultName : found;
                 }) },
-
-
-                { Symbol.FromString("cf-truncate"), NativeProcedure.Create<int, object>(num => RllConfig.TruncateCol = num ) },
-                { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
-
             };
             var itpl = new Interpreter(new[] { processExt, appExt });
             return itpl;
@@ -155,6 +176,7 @@ namespace Rll
                 if (args.Length == 1)
                 {
                     RunRepl();
+                    return;
 
                 }
                 script = args[1];
@@ -162,14 +184,14 @@ namespace Rll
             } else
             {
                 var tries =
-                    new[] { $"rll_{myname}.ss", $"rll/{myname}.ss" }
-                    .Select(t => Path.Combine(mypath, t));
+                    new[] { $"rll_{mybin}.ss", $"{mybin}.ss", $"rll\\{mybin}.ss" }
+                    .Select(t => Path.Combine(mypath, t)).ToArray();
 
 
                 script = tries.FirstOrDefault(File.Exists);
                 if (script == null)
                 {
-                    Console.WriteLine("Rll: did not find any of: " + tries.ToString());
+                    Console.WriteLine("Rll: did not find any of: " + String.Join(", ", tries));
                     System.Environment.Exit(1);
                         
                 }
