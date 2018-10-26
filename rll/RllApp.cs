@@ -65,6 +65,7 @@ namespace Rll
             var psi = p.StartInfo;
             psi.FileName = cmd;
             psi.Arguments = arg;
+            psi.UseShellExecute = false;
             if (cwd != null)
             {
                 psi.WorkingDirectory = cwd;
@@ -110,9 +111,9 @@ namespace Rll
                 { Symbol.FromString("repl"), NativeProcedure.Create(() => { RunRepl(); return None.Instance; }) },
 
                 { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
-                { Symbol.FromString("rll-run"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
+                { Symbol.FromString("rll-run-capture"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
                     ConvenienceRun(cmd, arg, null, true)) },
-                { Symbol.FromString("rll-run-new"), NativeProcedure.Create<string, string, Process >((cmd, arg) =>
+                { Symbol.FromString("rll-run"), NativeProcedure.Create<string, string, Process >((cmd, arg) =>
                     ConvenienceRun(cmd, arg, null, false)) }
             };
 
@@ -130,7 +131,13 @@ namespace Rll
                     var p = new Process();
                     return p;
                 }) },
+                { Symbol.FromString("ps-start"), NativeProcedure.Create<string, string, Process>((cmd, arg) => {
+                    var p = Process.Start(cmd,arg);
+                    return p;
+                }) },
+
                 { Symbol.FromString("ps-psi"), NativeProcedure.Create<Process, ProcessStartInfo>(p => p.StartInfo) },
+                  
                 { Symbol.FromString("ps-interact"), NativeProcedure.Create<Process,object>((p) => {
                     InteractProcess(p);
                     return None.Instance;
