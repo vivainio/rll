@@ -156,6 +156,13 @@ namespace Rll
                     System.Environment.Exit(exitCode);
                     return None.Instance;
                 }) },
+                { Symbol.FromString("cd"), NativeProcedure.Create<string, None>(path => {
+                    System.Environment.CurrentDirectory = path;
+                    return None.Instance;
+                }) },
+
+               { Symbol.FromString("pwd"), NativeProcedure.Create(() => System.Environment.CurrentDirectory) },
+
                 { Symbol.FromString("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
                 { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
