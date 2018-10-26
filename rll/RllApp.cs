@@ -20,6 +20,7 @@ namespace Rll
         static List<string> OutputLines = new List<string>();
         static List<string> ErrorLines = new List<string>();
         static List<string[]> Highlighters = new List<string[]>();
+        private static Interpreter AppInterpreter;
 
         static void PushOutput(string o)
         {
@@ -106,6 +107,8 @@ namespace Rll
                     return None.Instance;
                 }) },
                 { Symbol.FromString("cf-truncate"), NativeProcedure.Create<int, object>(num => RllConfig.TruncateCol = num ) },
+                { Symbol.FromString("repl"), NativeProcedure.Create(() => { RunRepl(); return None.Instance; }) },
+
                 { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
                 { Symbol.FromString("rll-run"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
                     ConvenienceRun(cmd, arg, null, true)) },
@@ -138,7 +141,7 @@ namespace Rll
                 }) },
 
                 { Symbol.FromString("print"), NativeProcedure.Create<object, object>(o => {
-                    Console.WriteLine($"{o}");
+                    Console.WriteLine(Schemy.Utils.PrintExpr(o));
                     return None.Instance;
                 }) },
 
@@ -146,6 +149,8 @@ namespace Rll
                     System.Environment.Exit(exitCode);
                     return None.Instance;
                 }) },
+                { Symbol.FromString("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
+                { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
                 {
                     var found = l.Cast<string>().FirstOrDefault(e => File.Exists(e));
@@ -159,18 +164,25 @@ namespace Rll
 
         public static void RunRepl()
         {
-            var itp = CreateItpl();
-            itp.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl" }); 
+            AppInterpreter.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl" }); 
+        }
+
+        public static void SetVar(string var, object val)
+        {
+            AppInterpreter.DefineGlobal(Symbol.FromString(var), val);
+
         }
 
         public static void RllMain()
         {
+            AppInterpreter = CreateItpl();
             var args = System.Environment.GetCommandLineArgs();
             
             var myname = args[0];
             var mybin = Path.GetFileNameWithoutExtension(myname);
             var mypath = Path.GetDirectoryName(myname);
             string script = null;
+            SetVar("dp0", mypath);
             if (mybin == "rll")
             {
                 if (args.Length == 1)
@@ -180,7 +192,7 @@ namespace Rll
 
                 }
                 script = args[1];
-
+                SetVar("args", String.Join(" ", args.Skip(2)));
             } else
             {
                 var tries =
@@ -192,14 +204,16 @@ namespace Rll
                 if (script == null)
                 {
                     Console.WriteLine("Rll: did not find any of: " + String.Join(", ", tries));
-                    System.Environment.Exit(1);
-                        
+                    System.Environment.Exit(1);                        
                 }
+                SetVar("args", String.Join(" ", args.Skip(1))); 
             }
-
-            var itp = CreateItpl();
-            var r = itp.Evaluate(File.OpenText(script));
-            Console.WriteLine(r.Error);
+            var r = AppInterpreter.Evaluate(File.OpenText(script));
+            if (r.Error != null)
+            {
+                Console.WriteLine(r.Error);
+                System.Environment.Exit(2);
+            }
         }
     }
 }
