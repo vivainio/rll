@@ -29,7 +29,7 @@
 
 (highlight-add "*** Warnings:" '("warning"))
 (highlight-add "*** Errors:" '("error"))
-(run msbuild "BuildSilverlight.xml" "c:/p2p/src/sl")
+(run msbuild "BuildFoo.xml" "c:/p/foo")
 (rl-save-output "out.txt")
 
 ;(define guessed (guess-file "a.txt" '("rll.exe" "c.txt")))
