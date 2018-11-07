@@ -10,7 +10,7 @@ namespace Schemy
     /// </summary>
     public class Environment
     {
-        private readonly IDictionary<Symbol, object> store;
+        public readonly IDictionary<Symbol, object> store;
 
         /// <summary>
         /// The enclosing environment. For top level env, this is null.

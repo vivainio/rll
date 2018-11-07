@@ -130,13 +130,6 @@ namespace Rll
                     new WebClient().DownloadFile(url, fname);                    
                     return None.Instance;
                 }) },
-
-
-
-            };
-
-            Interpreter.CreateSymbolTableDelegate processExt = _ => new Dictionary<Symbol, object>()
-            {
                 { Symbol.FromString("psi-exe"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.FileName = s) },
                 { Symbol.FromString("psi-arg"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.Arguments = s) },
                 { Symbol.FromString("psi-dir"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.WorkingDirectory = s) },
@@ -188,6 +181,7 @@ namespace Rll
                     File.Delete(pth);
                     return None.Instance;
                 }) },
+                { Sym("help"), NativeProcedure.Create(() => AppInterpreter.Environment.store.Keys.Select(k => k.AsString).Cast<object>().ToList() ) }, 
                 { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
                 {
@@ -195,14 +189,14 @@ namespace Rll
                     return found == null ? defaultName : found;
                 }) },
             };
-            var itpl = new Interpreter(new[] { processExt, appExt });
+            var itpl = new Interpreter(new[] { appExt });
             return itpl;
 
         }
 
         public static void RunRepl()
         {
-            AppInterpreter.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl" }); 
+            AppInterpreter.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl, try (help) for commands" }); 
         }
 
         public static void SetVar(string var, object val)
