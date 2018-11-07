@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -80,6 +82,8 @@ namespace Rll
             return p;
         }
 
+        private static Symbol Sym(string s) => Symbol.FromString(s);
+
         public static Interpreter CreateItpl()
         {
             Interpreter.CreateSymbolTableDelegate appExt = _ => new Dictionary<Symbol, object>()
@@ -113,8 +117,22 @@ namespace Rll
                 { Symbol.FromString("cf-show-only"), NativeProcedure.Create<List<object>, object>(patterns => RllConfig.ShowOnly = patterns.Cast<string>().ToArray()) },
                 { Symbol.FromString("rll-run-capture"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
                     ConvenienceRun(cmd, arg, null, true)) },
-                { Symbol.FromString("rll-run"), NativeProcedure.Create<string, string, Process >((cmd, arg) =>
-                    ConvenienceRun(cmd, arg, null, false)) }
+                { Symbol.FromString("os-system"), NativeProcedure.Create<string, string, Process >((cmd, arg) =>
+                    ConvenienceRun(cmd, arg, null, false)) },
+                { Symbol.FromString("unzip"), NativeProcedure.Create<string, string, None >((zipfile, targetdir) =>
+                {
+                    ZipFile.ExtractToDirectory(zipfile, targetdir);
+                    return None.Instance;
+
+                }) },
+                { Symbol.FromString("wget"), NativeProcedure.Create<string, string, None >((url, fname) =>
+                {
+                    new WebClient().DownloadFile(url, fname);                    
+                    return None.Instance;
+                }) },
+
+
+
             };
 
             Interpreter.CreateSymbolTableDelegate processExt = _ => new Dictionary<Symbol, object>()
@@ -137,7 +155,7 @@ namespace Rll
                 }) },
 
                 { Symbol.FromString("ps-psi"), NativeProcedure.Create<Process, ProcessStartInfo>(p => p.StartInfo) },
-                  
+
                 { Symbol.FromString("ps-interact"), NativeProcedure.Create<Process,object>((p) => {
                     InteractProcess(p);
                     return None.Instance;
@@ -161,9 +179,15 @@ namespace Rll
                     return None.Instance;
                 }) },
 
-               { Symbol.FromString("pwd"), NativeProcedure.Create(() => System.Environment.CurrentDirectory) },
+                { Symbol.FromString("pwd"), NativeProcedure.Create(() => System.Environment.CurrentDirectory) },
 
                 { Symbol.FromString("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
+                { Sym("path-tempfile"), NativeProcedure.Create(() => Path.GetTempFileName()) },
+                { Sym("path-temppath"), NativeProcedure.Create(() => Path.GetTempPath()) },
+                { Sym("path-remove"), NativeProcedure.Create<string, None>(pth => {
+                    File.Delete(pth);
+                    return None.Instance;
+                }) },
                 { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
                 {
