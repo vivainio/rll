@@ -173,6 +173,7 @@ namespace Rll
                 }) },
 
                 { Symbol.FromString("pwd"), NativeProcedure.Create(() => System.Environment.CurrentDirectory) },
+                { Sym("getenv"), NativeProcedure.Create<string, string>((s) => System.Environment.GetEnvironmentVariable(s)) },
 
                 { Symbol.FromString("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
                 { Sym("path-tempfile"), NativeProcedure.Create(() => Path.GetTempFileName()) },
@@ -181,6 +182,8 @@ namespace Rll
                     File.Delete(pth);
                     return None.Instance;
                 }) },
+                { Sym("s-format"), NativeProcedure.Create<string, List<object>, string>((formatString, args) => 
+                    String.Format(formatString, args.ToArray()))  },
                 { Sym("help"), NativeProcedure.Create(() => AppInterpreter.Environment.store.Keys.Select(k => k.AsString).Cast<object>().ToList() ) }, 
                 { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
