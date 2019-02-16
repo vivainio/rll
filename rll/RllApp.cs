@@ -130,6 +130,8 @@ namespace Rll
                     new WebClient().DownloadFile(url, fname);                    
                     return None.Instance;
                 }) },
+
+                // I don't know whether I'll remove these
                 { Symbol.FromString("psi-exe"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.FileName = s) },
                 { Symbol.FromString("psi-arg"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.Arguments = s) },
                 { Symbol.FromString("psi-dir"), NativeProcedure.Create<ProcessStartInfo, string, object>((psi, s) => psi.WorkingDirectory = s) },
@@ -175,9 +177,10 @@ namespace Rll
                 { Symbol.FromString("pwd"), NativeProcedure.Create(() => System.Environment.CurrentDirectory) },
                 { Sym("getenv"), NativeProcedure.Create<string, string>((s) => System.Environment.GetEnvironmentVariable(s)) },
 
-                { Symbol.FromString("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
+                { Sym("path-join"), NativeProcedure.Create<List<object>, string> (parts => Path.Combine(parts.Cast<string>().ToArray())) },
                 { Sym("path-tempfile"), NativeProcedure.Create(() => Path.GetTempFileName()) },
                 { Sym("path-temppath"), NativeProcedure.Create(() => Path.GetTempPath()) },
+                { Sym("path-random"), NativeProcedure.Create(() => Path.GetRandomFileName()) },
                 { Sym("path-remove"), NativeProcedure.Create<string, None>(pth => {
                     File.Delete(pth);
                     return None.Instance;
