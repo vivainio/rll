@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ToolCommandName>rll</ToolCommandName>
+    <PackAsTool>True</PackAsTool>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Authors>vivainio</Authors>
+    <Company />
+    <Copyright>Ville M. Vainio</Copyright>
+    <PackageProjectUrl>https://github.com/vivainio/rll</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/vivainio/rll/blob/master/LICENSE</PackageLicenseUrl>
+    <AssemblyName>rll</AssemblyName>
+  </PropertyGroup>
+<ItemGroup>
+  <Compile Include="../Rll/*.cs" />
+  <Compile Include="../Runner/*.cs" />
+  <Compile Include="../Rll/Schemy/*.cs" />
+</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../Rll/schemy/init.ss">
+      <LogicalName>init.ss</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

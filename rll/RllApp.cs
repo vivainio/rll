@@ -58,7 +58,7 @@ namespace Rll
                 }) },
                 { Symbol.FromString("wget"), NativeProcedure.Create<string, string, None >((url, fname) =>
                 {
-                    new WebClient().DownloadFile(url, fname);                    
+                    new WebClient().DownloadFile(url, fname);
                     return None.Instance;
                 }) },
 
@@ -92,9 +92,9 @@ namespace Rll
                     File.Delete(pth);
                     return None.Instance;
                 }) },
-                { Sym("s-format"), NativeProcedure.Create<string, List<object>, string>((formatString, args) => 
+                { Sym("s-format"), NativeProcedure.Create<string, List<object>, string>((formatString, args) =>
                     String.Format(formatString, args.ToArray()))  },
-                { Sym("help"), NativeProcedure.Create(() => AppInterpreter.Environment.store.Keys.Select(k => k.AsString).Cast<object>().ToList() ) }, 
+                { Sym("help"), NativeProcedure.Create(() => AppInterpreter.Environment.store.Keys.Select(k => k.AsString).Cast<object>().ToList() ) },
                 { Symbol.FromString("s-join"), NativeProcedure.Create<string, List<object>, string> ((sep, strings) => String.Join(sep, strings.Cast<string>().ToArray())) },
                 { Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
                 {
@@ -108,7 +108,7 @@ namespace Rll
 
         public static void RunRepl()
         {
-            AppInterpreter.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl, try (help) for commands" }); 
+            AppInterpreter.REPL(Console.In, Console.Out, "Schemy> ", new[] { "Entering repl, try (help) for commands" });
         }
 
         public static void SetVar(string var, object val)
@@ -121,13 +121,13 @@ namespace Rll
         {
             AppInterpreter = CreateItpl();
             var args = System.Environment.GetCommandLineArgs();
-            
+
             var myname = args[0];
             var mybin = Path.GetFileNameWithoutExtension(myname);
             var mypath = Path.GetDirectoryName(myname);
             string script = null;
             SetVar("dp0", mypath);
-            if (mybin == "rll")
+            if (mybin.Equals("rll", StringComparison.OrdinalIgnoreCase))
             {
                 if (args.Length == 1)
                 {
@@ -148,9 +148,9 @@ namespace Rll
                 if (script == null)
                 {
                     Console.WriteLine("Rll: did not find any of: " + String.Join(", ", tries));
-                    System.Environment.Exit(1);                        
+                    System.Environment.Exit(1);
                 }
-                SetVar("args", String.Join(" ", args.Skip(1))); 
+                SetVar("args", String.Join(" ", args.Skip(1)));
             }
             var r = AppInterpreter.Evaluate(File.OpenText(script));
             if (r.Error != null)
