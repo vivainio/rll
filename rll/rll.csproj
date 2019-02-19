@@ -54,7 +54,6 @@
     <Compile Include="schemy\Env.cs" />
     <Compile Include="schemy\FileSystemAccessor.cs" />
     <Compile Include="schemy\Procedure.cs" />
-    <Compile Include="schemy\Program.cs" />
     <Compile Include="schemy\Schemy.cs" />
     <Compile Include="schemy\Symbol.cs" />
     <Compile Include="schemy\Utils.cs" />
