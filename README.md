@@ -1,5 +1,4 @@
 # rll
-Rocket Launcher Runner
 
 Create small .exe launchers scripted with [Schemy](https://github.com/Microsoft/schemy), a very small Scheme interpreter for dotnet.
 
@@ -17,9 +16,9 @@ To create .exe launchers for your apps, unzip the binaries from https://github.c
 ## Use cases
 
 - You want to create a launcher that calls something (python, another exe, F# interactive, you name it) with custom arguments.
-- You don't want to create .cmd/.bat launcher because they don't exit cleanly.
-("Terminate batch job (Y/N)?" prompt can't be disabled)
-- You are on Windows, for better or worse
+- You don't want to create .cmd/.bat launcher because they don't exit cleanly
+("Terminate batch job (Y/N)?" prompt can't be disabled).
+- You are on Windows, for better or worse. PowerShell is not an option because it's fat, slow to launch and bad.
 - The launcher .exe needs to be small enough to sensibly add in version control (5kb). Equivalent Go/Rust binaries are > 1MB, Python script launchers (created by pip) are 100kb.
 
 Of course the "launcher" is just a script that may or may not launch stuff.
@@ -70,3 +69,4 @@ Schemy> (help)
 ## License
 
 MIT
+
