@@ -152,9 +152,12 @@ namespace Rll
                 }
                 SetVar("args", String.Join(" ", args.Skip(1)));
             }
-            var r = AppInterpreter.Evaluate(File.OpenText(script));
-            if (r.Error != null)
+
+            using (var fs = File.OpenRead(script))            
+            using (var scriptStream = new StreamReader(fs))
             {
+                var r = AppInterpreter.Evaluate(scriptStream);
+                if (r.Error == null) return;
                 Console.WriteLine(r.Error);
                 System.Environment.Exit(2);
             }
