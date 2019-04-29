@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-import os, shutil, glob
+import os, shutil, glob, textwrap
 
 prjdir = "Runner"
 version = "1.1"
@@ -24,6 +24,16 @@ def rm_globs(*globs):
             print("Del", f)
             os.remove(f)
 
+
+version_file_template = textwrap.dedent("""
+public static class GeneratedVersionInfo
+{
+    public const string Version = "%s";
+}
+""")
+
+git_tag = os.popen("git describe --tags", "r").read().strip()
+open("rll/GeneratedVersionInfo.cs", "w").write(version_file_template % git_tag)
 
 nuke(prjdir + "/bin")
 nuke(prjdir + "/obj")
