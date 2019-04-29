@@ -18,12 +18,13 @@ namespace Rll
     }
     public static class RllApp
     {
+        
 
         static List<string> OutputLines = new List<string>();
         static List<string> ErrorLines = new List<string>();
         static List<string[]> Highlighters = new List<string[]>();
         private static Interpreter AppInterpreter;
-
+        
         // rll-run
         public static Process ConvenienceRun(string cmd, string arg, string cwd)
         {
@@ -40,6 +41,16 @@ namespace Rll
             return p;
         }
 
+        public static void SendNOTIFY(string eventName)
+        {
+            var ok = AppInterpreter.Environment.TryGetValue(Sym("NOTIFY"), out var notifyFunction);
+            if (!ok)
+            {
+                return;
+            }
+            var del = notifyFunction as ICallable;
+            del?.Call(new List<object> {eventName});
+        }
         private static Symbol Sym(string s) => Symbol.FromString(s);
 
         public static Interpreter CreateItpl()
@@ -101,6 +112,7 @@ namespace Rll
                 {
                     Symbol.FromString("os-exit"), NativeProcedure.Create<int, object>(exitCode =>
                     {
+                        SendNOTIFY("exit");
                         System.Environment.Exit(exitCode);
                         return None.Instance;
                     })

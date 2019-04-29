@@ -10,7 +10,8 @@ namespace Runner
     {
         static void Main(string[] args)
         {
-            Rll.RllApp.RllMain();
+            Rll.RllApp.RllMain();            
+            Rll.RllApp.SendNOTIFY("exit");            
         }
     }
 }
