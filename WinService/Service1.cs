@@ -20,10 +20,13 @@ namespace WinService
         protected override void OnStart(string[] args)
         {
             Rll.RllApp.RllMain();
+            Rll.RllApp.SendNOTIFY("service-start");
         }
 
         protected override void OnStop()
         {
+            // note that "exit" will run before this, after RllMain exits
+            Rll.RllApp.SendNOTIFY("service-stop");
         }
     }
 }

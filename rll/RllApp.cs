@@ -75,9 +75,15 @@ namespace Rll
                 },
 
                 {
-                    Symbol.FromString("os-system"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
+                    Sym("os-system"), NativeProcedure.Create<string, string, Process>((cmd, arg) =>
                         ConvenienceRun(cmd, arg, null))
                 },
+                
+                { Sym("os-kill"), NativeProcedure.Create<Process, None>((proc) =>
+                {
+                    proc.Kill();
+                    return None.Instance;
+                }) },
                 {
                     Symbol.FromString("unzip"), NativeProcedure.Create<string, string, None>((zipfile, targetdir) =>
                     {
