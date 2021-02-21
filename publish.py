@@ -3,7 +3,7 @@ from __future__ import print_function
 import os, shutil, glob, textwrap
 
 prjdir = "Runner"
-version = "1.1"
+version = "1.2"
 
 
 def c(s):
@@ -25,12 +25,14 @@ def rm_globs(*globs):
             os.remove(f)
 
 
-version_file_template = textwrap.dedent("""
+version_file_template = textwrap.dedent(
+    """
 public static class GeneratedVersionInfo
 {
     public const string Version = "%s";
 }
-""")
+"""
+)
 
 git_tag = os.popen("git describe --tags", "r").read().strip()
 open("rll/GeneratedVersionInfo.cs", "w").write(version_file_template % git_tag)
@@ -46,4 +48,4 @@ os.chdir("Runner/bin")
 rm_globs("Release/*.pdb", "Release/*.xml", "Release/*.config")
 os.rename("Release", "rll")
 
-c("7za a ../../deploy/rll-%s.zip rll" % version)
+c("7z a ../../deploy/rll-%s.zip rll" % version)
