@@ -163,9 +163,14 @@ namespace Rll
                         String.Join(sep, strings.Cast<string>().ToArray()))
                 },
                 {
+                    // search through second arg for existing files (with exanding %LOCALAPPDATA% etc.).
+                    // if nothing found, use first arg as is, otherwise return the matched file
+                    // e.g. (guess-file "foo.exe" '("c:/t/foo.exe" "c:/t2/foo.exe")
                     Symbol.FromString("guess-file"), NativeProcedure.Create<string, List<object>, string>((defaultName, l) =>
                     {
-                        var found = l.Cast<string>().FirstOrDefault(e => File.Exists(e));
+                        var found = 
+                            l.Select(e => System.Environment.ExpandEnvironmentVariables((string) e))
+                                .FirstOrDefault(e => File.Exists(e));
                         return found == null ? defaultName : found;
                     })
                 },
