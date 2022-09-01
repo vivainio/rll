@@ -4,7 +4,7 @@ import os, shutil, glob, textwrap
 from pathlib import Path
 
 prjdir = "Runner"
-version = "1.2"
+version = "1.3"
 
 ROOT = Path(__file__).absolute().parent
 

@@ -1,5 +1,5 @@
 
 public static class GeneratedVersionInfo
 {
-    public const string Version = "v1.2.0";
+    public const string Version = "v1.3";
 }
