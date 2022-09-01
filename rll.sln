@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rll", "rll\rll.csproj", "{9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{B83ABF60-5167-4046-BB29-32DF223EF539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinService", "WinService\WinService.csproj", "{BD3B777D-4BFC-4237-89BB-239F2B78DEB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyWinService", "MyWinService\MyWinService.csproj", "{BD3B777D-4BFC-4237-89BB-239F2B78DEB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

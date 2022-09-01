@@ -1,10 +1,12 @@
 from __future__ import print_function
 
 import os, shutil, glob, textwrap
+from pathlib import Path
 
 prjdir = "Runner"
 version = "1.2"
 
+ROOT = Path(__file__).absolute().parent
 
 def c(s):
     print(">", s)
@@ -40,6 +42,8 @@ open("rll/GeneratedVersionInfo.cs", "w").write(version_file_template % git_tag)
 nuke(prjdir + "/bin")
 nuke(prjdir + "/obj")
 nuke("deploy")
+nuke("MyWinService/bin")
+nuke("MyWinService/obj")
 
 c("msbuild rll.sln /p:Configuration=Release")
 os.mkdir("deploy")
@@ -49,3 +53,8 @@ rm_globs("Release/*.pdb", "Release/*.xml", "Release/*.config")
 os.rename("Release", "rll")
 
 c("7z a ../../deploy/rll-%s.zip rll" % version)
+
+os.chdir(ROOT / "MyWinService/bin")
+os.rename("Release", "MyWinService")
+
+c(f"7z a {ROOT/'deploy/MyWinService'}-{version}.zip MyWinService")
